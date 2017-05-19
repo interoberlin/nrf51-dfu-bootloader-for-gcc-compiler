@@ -10,6 +10,8 @@
  *
  */
 
+#ifdef BOOTLOADER_TRANSPORT_BLE
+
 #include "dfu_transport.h"
 #include "dfu.h"
 #include "dfu_types.h"
@@ -821,3 +823,5 @@ uint32_t dfu_transport_close()
 
     return NRF_SUCCESS;
 }
+
+#endif // BOOTLOADER_TRANSPORT_BLE

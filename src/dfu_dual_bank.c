@@ -9,7 +9,9 @@
  * the file.
  *
  */
- 
+
+#ifdef BOOTLOADER_DUAL_BANK
+
 #include <stdint.h>
 #include <stddef.h> 
 #include "dfu.h"
@@ -438,3 +440,5 @@ void dfu_reset(void)
 
     bootloader_dfu_update_process(update_status);
 }
+
+#endif // BOOTLOADER_DUAL_BANK

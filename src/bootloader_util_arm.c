@@ -10,6 +10,9 @@
  *
  */
 
+// This file is for use with the ARM Compiler.
+#ifdef __CC_ARM
+
 #include "bootloader_util.h"
 #include <stdint.h>
 #include "nordic_common.h"
@@ -44,3 +47,5 @@ void bootloader_util_settings_get(const bootloader_settings_t ** pp_bootloader_s
 
     *pp_bootloader_settings = p_bootloader_settings;
 }
+
+#endif // __CC_ARM

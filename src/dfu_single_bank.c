@@ -9,7 +9,9 @@
  * the file.
  *
  */
- 
+
+#ifdef BOOTLOADER_SINGLE_BANK
+
 #include <stdint.h>
 #include <stddef.h> 
 #include "app_util.h"
@@ -311,3 +313,5 @@ void dfu_reset(void)
 
     bootloader_dfu_update_process(update_status);
 }
+
+#endif // BOOTLOADER_SINGLE_BANK

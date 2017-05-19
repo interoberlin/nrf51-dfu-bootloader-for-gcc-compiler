@@ -10,6 +10,8 @@
  *
  */
 
+#ifdef BOOTLOADER_TRANSPORT_SERIAL
+
 #include "dfu_transport.h"
 #include "dfu.h"
 #include "dfu_types.h"
@@ -309,3 +311,4 @@ uint32_t dfu_transport_close(void)
     return hci_transport_close();
 }
 
+#endif // BOOTLOADER_TRANSPORT_SERIAL

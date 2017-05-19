@@ -10,13 +10,14 @@
  *
  */
 
+// This file is for use with the GNU C/C++ Compiler.
+#ifdef __GNUC__
+
 #include "bootloader_util.h"
 #include <stdint.h>
 #include "nordic_common.h"
 #include "bootloader_types.h"
 #include "dfu_types.h"
-
-#if __GNUC__ && __ARM_EABI__
 
 __attribute__ ((section(".bootloaderSettings"))) uint8_t m_boot_settings[1024] ;
 __attribute__ ((section(".uicrBootStartAddress"))) uint32_t m_uicr_bootloader_start_address = BOOTLOADER_REGION_START;
@@ -31,7 +32,6 @@ static inline void StartApplication(uint32_t start_addr)
           "BX    R3\t\n"
           ".ALIGN\t\n");
 }
-#endif
 
 
 void bootloader_util_app_start(uint32_t start_addr)
@@ -44,3 +44,5 @@ void bootloader_util_settings_get(const bootloader_settings_t ** pp_bootloader_s
 {
     *pp_bootloader_settings = mp_bootloader_settings;
 }
+
+#endif // __GNUC__
