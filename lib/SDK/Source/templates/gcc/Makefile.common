@@ -85,6 +85,9 @@ ASSEMBLER_SOURCE_PATHS = src/ $(SDK_SOURCE_PATH) $(TEMPLATE_PATH) $(wildcard $(S
 C_OBJECTS = $(addprefix $(OBJECT_DIRECTORY)/, $(C_SOURCE_FILENAMES:.c=.o) )
 ASSEMBLER_OBJECTS = $(addprefix $(OBJECT_DIRECTORY)/, $(ASSEMBLER_SOURCE_FILENAMES:.s=.o) )
 
+CC_COLORS = sed -e "s/\(warning:\)/\x1b[1;33m&\x1b[0m/" -e "s/\(error:\)/\x1b[91m&\x1b[0m/"
+LD_COLORS = sed -e "s/:[0-9]*:\([ 0-9a-zA-Z_\`\']*\)/:\x1b[1;91m\1\x1b[0m/"
+
 # Set source lookup paths
 vpath %.c $(C_SOURCE_PATHS)
 vpath %.s $(ASSEMBLER_SOURCE_PATHS)
@@ -117,7 +120,7 @@ $(OBJECT_DIRECTORY)/%.o: %.c
 # Build header dependencies
 	$(CC) $(CFLAGS) $(INCLUDEPATHS) -M $< -MF "$(@:.o=.d)" -MT $@
 # Do the actual compilation
-	$(CC) $(CFLAGS) $(INCLUDEPATHS) -c -o $@ $<
+	$(CC) $(CFLAGS) $(INCLUDEPATHS) -c -o $@ $< 2>&1 | $(CC_COLORS)
 
 ## Assemble .s files
 $(OBJECT_DIRECTORY)/%.o: %.s
@@ -125,7 +128,7 @@ $(OBJECT_DIRECTORY)/%.o: %.s
 
 ## Link C and assembler objects to an .out file
 $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out: $(BUILD_DIRECTORIES) $(C_OBJECTS) $(ASSEMBLER_OBJECTS) $(LIBRARIES)
-	$(CC) $(LDFLAGS) $(C_OBJECTS) $(ASSEMBLER_OBJECTS) $(LIBRARIES) -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
+	$(CC) $(LDFLAGS) $(C_OBJECTS) $(ASSEMBLER_OBJECTS) $(LIBRARIES) -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out 2>&1 | $(LD_COLORS)
 
 ## Create binary .bin file from the .out file
 $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).bin: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
