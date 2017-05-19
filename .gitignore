@@ -1,0 +1,6 @@
+# Binary
+*.o
+*.elf
+*.bin
+_build/
+

@@ -5,11 +5,11 @@ CFLAGS += -DBLE_STACK_SUPPORT_REQD -DBOOTLOADER_BANKED -DBLE_STACK_SUPPORT_REQD 
 
 DEVICESERIES := nrf51
 
-C_SOURCE_FILES += main.c
-C_SOURCE_FILES += dfu_dual_bank.c
-C_SOURCE_FILES += dfu_transport_ble.c
-C_SOURCE_FILES += bootloader.c
-C_SOURCE_FILES += bootloader_util_gcc.c
+SDK_PATH = lib/SDK/
+
+C_SOURCE_FILES += $(wildcard src/*.c)
+ASSEMLBER_SOURCE_FILES = $(wildcard src/*.s)
+
 C_SOURCE_FILES += $(SDK_PATH)Source/ble/ble_services/ble_dfu.c
 C_SOURCE_FILES += $(SDK_PATH)Source/app_common/app_timer.c
 C_SOURCE_FILES += $(SDK_PATH)Source/app_common/pstorage.c
@@ -22,15 +22,15 @@ C_SOURCE_FILES += $(SDK_PATH)Source/ble/ble_advdata.c
 C_SOURCE_FILES += $(SDK_PATH)Source/ble/ble_services/ble_srv_common.c
 C_SOURCE_FILES += $(SDK_PATH)Source/ble/softdevice_handler.c
 
+INCLUDEPATHS += -I"./"
+INCLUDEPATHS += -I"include/"
+INCLUDEPATHS += -I"include/ble_transport/"
+
 INCLUDEPATHS += -I"$(SDK_PATH)Include/ble"
 INCLUDEPATHS += -I"$(SDK_PATH)Include/app_common"
 INCLUDEPATHS += -I"$(SDK_PATH)Include/s110"
 INCLUDEPATHS += -I"$(SDK_PATH)Include/sd_common"
 INCLUDEPATHS += -I"$(SDK_PATH)Include/ble/ble_services"
-INCLUDEPATHS += -I"../include/ble_transport"
-INCLUDEPATHS += -I"../include"
-INCLUDEPATHS += -I"../"
-SDK_PATH = ../../../../../
 
 LINKER_SCRIPT = gcc_$(DEVICESERIES)_bootloader_$(DEVICE_VARIANT).ld
 OUTPUT_FILENAME := $(OUTPUT_FILENAME)_bootloader_$(DEVICE_VARIANT)
