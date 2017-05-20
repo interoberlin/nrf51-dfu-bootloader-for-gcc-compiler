@@ -1,3 +1,7 @@
+#
+# Compiler setup and invocation
+#
+
 DEVICE := NRF51
 DEVICESERIES := nrf51
 
@@ -7,9 +11,9 @@ TEMPLATE_PATH += $(SDK_SOURCE_PATH)/templates/gcc/
 OUTPUT_BINARY_DIRECTORY := _build
 
 ifeq ($(OS),Windows_NT)
-include $(TEMPLATE_PATH)Makefile.windows
+include Makefile.windows
 else
-include $(TEMPLATE_PATH)Makefile.posix
+include Makefile.posix
 endif
 
 ifeq ($(LINKER_SCRIPT),)
@@ -43,8 +47,10 @@ OBJCOPY  		:= "$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy"
 MK 				:= mkdir
 RM 				:= rm -rf
 
-OBJECT_DIRECTORY := _build
-LISTING_DIRECTORY := _build
+OBJECT_DIRECTORY  := $(OUTPUT_BINARY_DIRECTORY)
+LISTING_DIRECTORY := $(OUTPUT_BINARY_DIRECTORY)
+
+ELF = $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).elf
 
 C_SOURCE_FILES += system_$(DEVICESERIES).c
 ASSEMBLER_SOURCE_FILES += gcc_startup_$(DEVICESERIES).s
@@ -95,13 +101,15 @@ vpath %.s $(ASSEMBLER_SOURCE_PATHS)
 # Include automatically previously generated dependencies
 -include $(addprefix $(OBJECT_DIRECTORY)/, $(COBJS:.o=.d))
 
+
+## Default build target
+all: release
+
 ### Targets
 debug:    CFLAGS += -DDEBUG -g3 -O0
 debug:    ASMFLAGS += -DDEBUG -g3 -O0
 debug:    $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).bin $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
 
-.PHONY: release
-release: clean
 release:  CFLAGS += -DNDEBUG -O3
 release:  ASMFLAGS += -DNDEBUG -O3
 release:  $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).bin $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
@@ -138,22 +146,5 @@ $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).bin: $(OUTPUT_BINARY_DIRECTORY)/$(
 $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).elf
 	$(OBJCOPY) -O ihex $< $@
 
-## Default build target
-.PHONY: all
-all: clean release
-
 clean:
 	$(RM) $(OUTPUT_BINARY_DIRECTORY)
-
-## Program device
-.PHONY: flash
-flash: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
-	nrfjprog --reset --program $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
-
-.PHONY: reset
-reset:
-	nrfjprog --reset
-
-.PHONY: erase
-erase:
-	nrfjprog --erase

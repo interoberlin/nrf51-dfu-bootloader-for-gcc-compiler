@@ -1,0 +1,19 @@
+#
+# Firmware flashing and debugging
+#
+
+OPENOCD := openocd
+OPENOCD_INTERFACE = -f interface/ftdi/incircuit-icprog.cfg
+OPENOCD_TRANSPORT = -c "transport select swd;"
+OPENOCD_TARGET    = -c "set WORKAREASIZE 0;" -f target/nrf51.cfg
+
+OPENOCD := $(OPENOCD) $(OPENOCD_INTERFACE) $(OPENOCD_TRANSPORT) $(OPENOCD_TARGET) $(OPENOCD_ARGS)
+
+erase:
+	$(OPENOCD) -c "init; reset halt; nrf51 mass_erase; exit;"
+
+flash: $(BIN)
+	$(OPENOCD) -c "init; reset halt; program $(ELF) verify; reset; exit;"
+
+openocd:
+	$(OPENOCD) -c "init; arm semihosting enable;"
